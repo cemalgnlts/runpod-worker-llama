@@ -1,0 +1,57 @@
+name: 📦 Build custom Docker image and push to Docker Hub
+
+# Workflow triggered manually (GitHub UI) or programmatically by the check-llama-new-release workflow
+on:
+  workflow_call:
+    inputs:
+      llama_version:
+        description: 'llama version to build. Example: 1.20.0'
+        required: true
+        type: string
+      next_version_suffix:
+        description: 'Next version suffix to compare with the new release. Example: 0'
+        required: false
+        type: string
+  workflow_dispatch:
+    inputs:
+      llama_version:
+        description: 'llama version to build. Example: 1.20.0'
+        required: true
+        type: string
+      next_version_suffix:
+        description: 'Next version suffix to compare with the new release. Example: 0'
+        required: false
+        type: string
+
+jobs:
+  build-push-docker-image:
+    name: 🐳 Build and push Docker image
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./
+          build-args: LLAMA_VERSION=${{ inputs.llama_version }}
+          push: true
+          tags: cemalgnlts/runpod-llama:${{ inputs.llama_version }}${{ inputs.next_version_suffix }},cemalgnlts/runpod-llama:latest
+
+  create-release:
+    name: 🏷️ Create GitHub Release
+    needs: build-push-docker-image
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    permissions:
+      contents: write
+    steps:
+      - uses: ncipollo/release-action@v1
+        with:
+          commit: master
+          tag: llama@${{ inputs.llama_version }}${{ inputs.next_version_suffix }}

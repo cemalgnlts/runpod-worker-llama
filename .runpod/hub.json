@@ -1,0 +1,46 @@
+{
+  "title": "Runpod Worker Llama.cpp",
+  "description": "A serverless Llama.cpp Worker for Runpod",
+  "type": "serverless",
+  "category": "language",
+  "iconUrl": "https://llama-cpp.com/wp-content/uploads/2025/10/Llama-cpp-768x277.jpg",
+  "config": {
+    "runsOn": "GPU",
+    "gpuCount": 1,
+    "gpuIds": "AMPERE_16,AMPERE_24,ADA_24",
+    "containerDiskInGb": 20,
+    "presets": [],
+    "env": [
+      {
+        "key": "LLAMA_MODEL_NAME",
+        "input": {
+          "name": "Model Name",
+          "type": "string",
+          "description": "Name of a model to preload",
+          "default": "unsloth/Qwen35-9B-GGUF:UD-Q4_K_XL",
+          "advanced": false
+        }
+      },
+      {
+        "key": "MAX_CONCURRENCY",
+        "input": {
+          "name": "Max Concurrency",
+          "type": "number",
+          "description": "Maximum number of concurrent requests to handle (default: 8)",
+          "default": 8,
+          "advanced": true
+        }
+      },
+      {
+        "key": "LLAMA_NUM_PARALLEL",
+        "input": {
+          "name": "Parallel Requests",
+          "type": "string",
+          "description": "Maximum number of concurrent requests to handle (default: 4 or 1)",
+          "default": "",
+          "advanced": true
+        }
+      }
+    ]
+  }
+}
