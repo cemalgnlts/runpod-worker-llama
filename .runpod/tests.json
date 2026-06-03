@@ -14,7 +14,7 @@
     "env": [
       {
         "key": "LLAMA_MODEL_NAME",
-        "value": "phi3"
+        "value": "unsloth/Qwen3.5-9B-GGUF:UD-Q4_K_XL"
       }
     ],
     "allowedCudaVersions": [
