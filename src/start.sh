@@ -38,7 +38,7 @@ llama-server \
   --min-p 0.00 \
   --no-ui 2>&1 | tee "llama.server.log" &
 
-LLAMA_SERVER_PID=$! # Arka plandaki sürecin PID'sini al
+LLAMA_SERVER_PID=$!
 
 tries_so_far=0
 
@@ -73,5 +73,3 @@ done
 echo "start.sh: llama-server is ready! Starting handler.py..."
 
 python -u handler.py $1
-
-cleanup
