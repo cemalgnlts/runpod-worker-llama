@@ -15,7 +15,7 @@ client = OpenAI(
 class OllamaEngine:
     def __init__(self):
         load_dotenv()
-        print ("OllamaEngine initialized")
+        print ("Engine initialized")
 
     async def generate(self, job_input):
         # Get model from LLAMA_ARG_ALIAS defauting to qwen3.5-9b
