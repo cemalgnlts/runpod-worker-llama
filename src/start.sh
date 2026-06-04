@@ -17,7 +17,7 @@ cleanup() {
 
 trap cleanup SIGINT SIGTERM
 
-pgrep llama-server | xargs -r kill -9
+pgrep llama-server | xargs -r kill -9 || true
 
 export LLAMA_ARG_HF_REPO="unsloth/Qwen3.5-9B-GGUF:UD-Q4_K_XL"
 export LLAMA_ARG_ALIAS="qwen3.5-9b"
