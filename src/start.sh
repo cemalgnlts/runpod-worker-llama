@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "start.sh: Begin";
+
 set -e -o pipefail
 
 cleanup() {
