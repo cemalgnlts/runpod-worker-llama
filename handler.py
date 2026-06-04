@@ -8,7 +8,6 @@ max_concurrency = int(os.getenv("MAX_CONCURRENCY", DEFAULT_MAX_CONCURRENCY))
 
 async def handler(job: any):
     # Just dump the whole input to the console and then return an {"ok": True} response
-    print('Job:', job)
 
     job_input = JobInput(job["input"])
     engine_class = OllamaOpenAiEngine if job_input.openai_route else OllamaEngine
@@ -27,10 +26,12 @@ async def handler(job: any):
 #    async for batch in results_generator:
 #        yield batch
 
-runpod.serverless.start(
-    {
-        "handler": handler,
-        "concurrency_modifier": lambda x: max_concurrency,
-        "return_aggregate_stream": True,
-    }
-)
+if __name__ == '__main__':
+    # runpod.serverless.start({'handler': handler })
+    runpod.serverless.start(
+        {
+            "handler": handler,
+            "concurrency_modifier": lambda x: max_concurrency,
+            "return_aggregate_stream": True,
+        }
+    )

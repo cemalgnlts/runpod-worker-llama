@@ -9,8 +9,7 @@ cleanup() {
 # Trap exit signals and call the cleanup function
 trap cleanup SIGINT SIGTERM
 
-# Kill any existing ollama processes
-pgrep llama | xargs kill
+pgrep llama-server | xargs kill
 
 export LLAMA_ARG_HF_REPO="unsloth/Qwen3.5-9B-GGUF:UD-Q4_K_XL"
 export LLAMA_ARG_ALIAS="qwen3.5-9b"
@@ -35,7 +34,7 @@ OLLAMA_PID=$! # Store the process ID (PID) of the background command
 check_server_is_running() {
     echo "Checking if server is running..."
 
-    if cat llama.server.log | grep -q "llama_server: model loaded"; then
+    if cat llama.server.log | grep -q "model loaded"; then
         return 0 # Success
     else
         return 1 # Failure

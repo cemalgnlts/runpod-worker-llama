@@ -1,7 +1,5 @@
 FROM ghcr.io/ggml-org/llama.cpp:server-cuda
 
-ENV PYTHONUNBUFFERED=1
-
 # Set up the working directory
 WORKDIR /
 
@@ -29,13 +27,10 @@ RUN apt-get update --yes --quiet && DEBIAN_FRONTEND=noninteractive apt-get insta
 WORKDIR /work
 
 # Add my src as /work
-ADD ./src /work
-
-# Set defaut lllama models directory to /runpod-volume where runpod will mount the volume by default
-ENV LLAMA_MODELS="/runpod-volume"
+ADD . /work
 
 # Install runpod and its dependencies
-RUN pip install -r requirements.txt && chmod +x /work/start.sh
+RUN pip install -r requirements.txt && chmod +x ./start.sh
     
 # Set the entrypoint
-ENTRYPOINT ["/bin/sh", "-c", "/work/start.sh"]
+ENTRYPOINT ["/bin/bash", "-c", "./start.sh"]
