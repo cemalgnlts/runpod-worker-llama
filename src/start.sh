@@ -30,7 +30,7 @@ touch llama.server.log
 
 echo "start.sh: Starting llama-server..."
 
-llama-server \
+LD_LIBRARY_PATH=/app /app/llama-server \
   --reasoning off \
   --temp 0.7 \
   --top-p 0.8 \
