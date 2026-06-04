@@ -1,7 +1,9 @@
 #!/bin/bash
 
+set -e -o pipefail
+
 cleanup() {
-    echo "Cleaning up..."
+    echo "start.sh: Cleaning up..."
     pkill -P $$ # Kill all child processes of the current script
     exit 0
 }
@@ -20,8 +22,10 @@ export LLAMA_ARG_KV_UNIFIED="on"
 export LLAMA_ARG_N_PARALLEL=4
 export LLAMA_ARG_PORT=5000
 
+touch llama.server.log
+
 # Start the llama server and log its output
-/app/llama-server \
+LD_LIBRARY_PATH=/app  /app/llama-server \
   --reasoning off \
   --temp 0.7 \
   --top-p 0.8 \
@@ -31,27 +35,36 @@ export LLAMA_ARG_PORT=5000
 
 OLLAMA_PID=$! # Store the process ID (PID) of the background command
 
+tries_so_far=0
+
 check_server_is_running() {
     echo "Checking if server is running..."
 
-    if cat llama.server.log | grep -q "model loaded"; then
+    if cat llama.server.log | grep -q "llama_server: model loaded"; then
         return 0 # Success
     else
         return 1 # Failure
     fi
+
+    tries_so_far=$((tries_so_far + 1))
+
+    if [ $tries_so_far -ge 120 ]; then
+        echo "start.sh: Error: llama-server did not start within 60 seconds."
+        exit 1
+    fi
+
+    # check if the process is still running
+    if ! kill -0 $LLAMA_SERVER_PID 2>/dev/null; then
+        echo "start.sh: Error: llama-server process has exited unexpectedly."
+        exit 1
+    fi
 }
+
+echo "start.sh: Waiting for llama-server to start..."
 
 # Wait for the server to start
 while ! check_server_is_running; do
-    sleep 5
+    sleep 0.5
 done
-
-# IF $MODEL_NAME is set, make sure to pull the model, else just skip
-if [ -z "$LLAMA_MODEL_NAME" ]; then
-    echo "No model name provided. Skipping model pull..."
-else
-    echo "Pulled model $LLAMA_MODEL_NAME..."
-    # ollama pull $LLAMA_MODEL_NAME
-fi
 
 python -u handler.py $1

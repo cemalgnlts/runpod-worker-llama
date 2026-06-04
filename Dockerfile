@@ -1,8 +1,5 @@
 FROM ghcr.io/ggml-org/llama.cpp:server-cuda
 
-# Set up the working directory
-WORKDIR /
-
 RUN apt-get update --yes --quiet && DEBIAN_FRONTEND=noninteractive apt-get install --yes --quiet --no-install-recommends \
     software-properties-common \
     gpg-agent \
@@ -23,14 +20,10 @@ RUN apt-get update --yes --quiet && DEBIAN_FRONTEND=noninteractive apt-get insta
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set the working directory
 WORKDIR /work
 
-# Add my src as /work
-ADD . /work
+ADD ./src /work
 
-# Install runpod and its dependencies
-RUN pip install -r requirements.txt && chmod +x ./start.sh
-    
-# Set the entrypoint
-ENTRYPOINT ["/bin/bash", "-c", "./start.sh"]
+RUN pip install -r ./requirements.txt && chmod +x /work/start.sh
+
+ENTRYPOINT ["/bin/sh", "-c", "/work/start.sh"]
