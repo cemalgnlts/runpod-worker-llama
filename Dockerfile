@@ -34,4 +34,4 @@ RUN pip install -r /work/requirements.txt
 COPY ./src /work
 RUN chmod +x /work/start.sh
 
-ENTRYPOINT ["/work/start.sh"]
+ENTRYPOINT ["/bin/bash", "-c", "/work/start.sh"]
