@@ -6,13 +6,13 @@ from openai import OpenAI
 from utils import JobInput
 
 client = OpenAI(
-    base_url='http://localhost:5000/v1/',
+    base_url=f"http://localhost:{os.getenv('LLAMA_ARG_PORT', '5000')}/v1/",
 
     # required but ignored
-    api_key='llama',
+    api_key="llama",
 )
 
-class OllamaEngine:
+class LlamaEngine:
     def __init__(self):
         load_dotenv()
         print ("Engine initialized")
@@ -22,13 +22,13 @@ class OllamaEngine:
         model = os.getenv("LLAMA_ARG_ALIAS", "qwen3.5-9b")
 
         # Depending if prompt is a string or a list, we need to handle it differently and send it to the OpenAI API
-        if isinstance(job_input.llm_input, str):
+        if isinstance(job_input.prompt, str):
             # Buid new JobInput object with the OpenAI route and input
             openAiJob = JobInput({
                 "openai_route": "/v1/completions",
                 "openai_input": {
                     "model": model,
-                    "prompt": job_input.llm_input,
+                    "prompt": job_input.prompt,
                     "stream": job_input.stream
                 }
             })
@@ -38,7 +38,7 @@ class OllamaEngine:
                 "openai_route": "/v1/chat/completions",
                 "openai_input": {
                     "model": model,
-                    "messages": job_input.llm_input,
+                    "messages": job_input.prompt,
                     "stream": job_input.stream
                 }
             })
@@ -47,17 +47,17 @@ class OllamaEngine:
         print ("OpenAI job:", openAiJob)
         
         # Create a generator that will yield the response from the OpenAI API
-        openAIEngine = OllamaOpenAiEngine()
+        openAIEngine = LlamaOpenAiEngine()
         generate = openAIEngine.generate(openAiJob)
 
         # Yield the response from the OpenAI API
         async for batch in generate:
             yield batch
 
-class OllamaOpenAiEngine(OllamaEngine):
+class LlamaOpenAiEngine(LlamaEngine):
     def __init__(self):
         load_dotenv()
-        print ("OllamaOpenAiEngine initialized")
+        print ("LlamaOpenAiEngine initialized")
 
     async def generate(self, job_input):
         print("Generating response for job_input:", job_input)

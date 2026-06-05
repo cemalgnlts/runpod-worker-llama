@@ -28,8 +28,6 @@ export LLAMA_ARG_KV_UNIFIED="on"
 export LLAMA_ARG_N_PARALLEL=4
 export LLAMA_ARG_PORT=5000
 
-touch llama.server.log
-
 echo "start.sh: Starting llama-server..."
 
 LD_LIBRARY_PATH=/app /app/llama-server \
@@ -38,40 +36,26 @@ LD_LIBRARY_PATH=/app /app/llama-server \
   --top-p 0.8 \
   --top-k 20 \
   --min-p 0.00 \
-  --no-ui 2>&1 | tee "llama.server.log" &
+  --no-ui 2>&1 &
 
 LLAMA_SERVER_PID=$!
 
-tries_so_far=0
+echo "start.sh: Waiting for llama-server to load model..."
 
-check_server_is_running() {
-    tries_so_far=$((tries_so_far + 1))
+secs=0
 
-    if [ $tries_so_far -ge 120 ]; then
+until nc -z localhost "$LLAMA_ARG_PORT"
+do
+    secs=$((secs + 0.5))
+
+    if [ $secs -ge 60 ]; then
         echo "start.sh: Error: llama-server did not start within 60 seconds."
         exit 1
     fi
 
-    if ! kill -0 $LLAMA_SERVER_PID 2>/dev/null; then
-        echo "start.sh: Error: llama-server process has exited unexpectedly."
-        echo "--- LAST LOGS ---"
-        tail -n 20 llama.server.log
-        exit 1
-    fi
-
-    if grep -q "llama_server: model loaded" llama.server.log; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-echo "start.sh: Waiting for llama-server to load model..."
-
-while ! check_server_is_running; do
     sleep 0.5
 done
 
-echo "start.sh: llama-server is ready! Starting handler.py..."
+echo "start.sh: llama-server is ready!"
 
 python -u handler.py $1
