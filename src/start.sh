@@ -12,7 +12,7 @@ cleanup() {
         kill $LLAMA_SERVER_PID 2>/dev/null || true
     fi
 
-    exit 0
+    exit
 }
 
 trap cleanup SIGINT SIGTERM
@@ -20,7 +20,9 @@ trap cleanup SIGINT SIGTERM
 pgrep llama-server | xargs -r kill -9 || true
 
 #export LLAMA_ARG_HF_REPO="unsloth/Qwen3.5-9B-GGUF:UD-Q4_K_XL"
-#export HF_CACHE_ROOT="/runpod-volume/huggingface-cache/hub"
+export HF_CACHE_ROOT="/runpod-volume/huggingface-cache/hub"
+export MODEL_FILE="$HF_CACHE_ROOT/Qwen3.5-9B-UD-Q4_K_XL.gguf"
+
 export LLAMA_ARG_MODELS_DIR="/runpod-volume/huggingface-cache/hub"
 export LLAMA_ARG_ALIAS="qwen3.5-9b"
 export LLAMA_ARG_CTX_SIZE=131072
@@ -29,6 +31,14 @@ export LLAMA_ARG_FLASH_ATTN="on"
 export LLAMA_ARG_KV_UNIFIED="on"
 export LLAMA_ARG_N_PARALLEL=4
 export LLAMA_ARG_PORT="5000"
+
+if [ ! -f "$MODEL_FILE" ]; then
+    echo "start.sh: Downloading model..."
+    mkdir -p "$HF_CACHE_ROOT"
+    curl -L -o "$MODEL_FILE" "https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-UD-Q4_K_XL.gguf?download=true"
+else
+    echo "start.sh: Model exists."
+fi
 
 echo "start.sh: Starting llama-server..."
 
