@@ -9,6 +9,7 @@ RUN apt-get update --yes --quiet && \
         software-properties-common \
         gpg-agent \
         curl \
+        netcat-openbsd \
         ca-certificates && \
     add-apt-repository --yes ppa:deadsnakes/ppa && \
     apt-get update --yes --quiet && \
