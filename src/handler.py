@@ -3,7 +3,7 @@ import os
 from utils import JobInput
 from engine import LlamaEngine, LlamaOpenAiEngine
 
-DEFAULT_MAX_CONCURRENCY = 8
+DEFAULT_MAX_CONCURRENCY = 4
 max_concurrency = int(os.getenv("MAX_CONCURRENCY", DEFAULT_MAX_CONCURRENCY))
 
 async def handler(job: any):
