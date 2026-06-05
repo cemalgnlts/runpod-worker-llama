@@ -27,6 +27,18 @@ RUN apt-get update --yes --quiet && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+ENV HF_CACHE_ROOT="/runpod-volume/huggingface-cache/hub"
+ENV MODEL_FILE="$HF_CACHE_ROOT/Qwen3.5-9B-UD-Q4_K_XL.gguf"
+
+ENV LLAMA_ARG_MODELS_DIR="/runpod-volume/huggingface-cache/hub"
+ENV LLAMA_ARG_ALIAS="qwen3.5-9b"
+ENV LLAMA_ARG_CTX_SIZE=131072
+ENV LLAMA_ARG_N_GPU_LAYERS=99
+ENV LLAMA_ARG_FLASH_ATTN="on"
+ENV LLAMA_ARG_KV_UNIFIED="on"
+ENV LLAMA_ARG_N_PARALLEL=4
+ENV LLAMA_ARG_PORT="5000"
+
 WORKDIR /work
 
 COPY ./src/requirements.txt /work/requirements.txt
