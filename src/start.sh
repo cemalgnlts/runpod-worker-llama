@@ -44,16 +44,18 @@ echo "start.sh: Waiting for llama-server to load model..."
 
 secs=0
 
-until nc -z localhost "$LLAMA_ARG_PORT"
-do
-    secs=$((secs + 0.5))
-
-    if [ $secs -ge 60 ]; then
-        echo "start.sh: Error: llama-server did not start within 60 seconds."
-        exit 1
+while true; do
+    if nc -z 127.0.0.1 "$LLAMA_ARG_PORT" >/dev/null 2>&1; then
+        break
     fi
 
-    sleep 0.5
+    sleep 1
+    secs=$((secs + 1))
+
+    if [ $secs -ge 120 ]; then
+        echo "start.sh: Error: llama-server did not start within 120 seconds."
+        exit 1
+    fi
 done
 
 echo "start.sh: llama-server is ready!"
