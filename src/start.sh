@@ -30,6 +30,7 @@ fi
 echo "start.sh: Starting llama-server..."
 
 LD_LIBRARY_PATH=/app /app/llama-server \
+  --alias "$LLAMA_ARG_ALIAS" \
   --reasoning off \
   --temp 0.7 \
   --top-p 0.8 \
