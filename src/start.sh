@@ -19,14 +19,16 @@ trap cleanup SIGINT SIGTERM
 
 pgrep llama-server | xargs -r kill -9 || true
 
-export LLAMA_ARG_HF_REPO="unsloth/Qwen3.5-9B-GGUF:UD-Q4_K_XL"
+#export LLAMA_ARG_HF_REPO="unsloth/Qwen3.5-9B-GGUF:UD-Q4_K_XL"
+#export HF_CACHE_ROOT="/runpod-volume/huggingface-cache/hub"
+export LLAMA_ARG_MODELS_DIR="/runpod-volume/huggingface-cache/hub"
 export LLAMA_ARG_ALIAS="qwen3.5-9b"
 export LLAMA_ARG_CTX_SIZE=131072
 export LLAMA_ARG_N_GPU_LAYERS=99
 export LLAMA_ARG_FLASH_ATTN="on"
 export LLAMA_ARG_KV_UNIFIED="on"
 export LLAMA_ARG_N_PARALLEL=4
-export LLAMA_ARG_PORT=5000
+export LLAMA_ARG_PORT="5000"
 
 echo "start.sh: Starting llama-server..."
 
@@ -45,7 +47,7 @@ echo "start.sh: Waiting for llama-server to load model..."
 secs=0
 
 while true; do
-    if nc -z 127.0.0.1 "$LLAMA_ARG_PORT" >/dev/null 2>&1; then
+    if nc -z 0.0.0.0 "$LLAMA_ARG_PORT" >/dev/null 2>&1; then
         break
     fi
 

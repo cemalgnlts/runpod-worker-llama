@@ -28,6 +28,10 @@ RUN apt-get update --yes --quiet && \
 
 WORKDIR /work
 
+ENV HF_CACHE_ROOT="/runpod-volume/huggingface-cache/hub"
+RUN mkdir -p "$HF_CACHE_ROOT" && \
+    curl -L -o "$HF_CACHE_ROOT/Qwen3.5-9B-UD-Q4_K_XL.gguf" https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-UD-Q4_K_XL.gguf?download=true
+
 COPY ./src/requirements.txt /work/requirements.txt
 RUN pip install -r /work/requirements.txt
 
