@@ -18,39 +18,29 @@ class LlamaEngine:
         print ("Engine initialized")
 
     async def generate(self, job_input):
-        # Get model from LLAMA_ARG_ALIAS defauting to qwen3.5-9b
         model = os.getenv("LLAMA_ARG_ALIAS", "qwen3.5-9b")
 
-        # Depending if prompt is a string or a list, we need to handle it differently and send it to the OpenAI API
+        # Eğer gelen prompt düz yazı (string) ise, onu Chat formatına (Messages) çeviriyoruz
         if isinstance(job_input.prompt, str):
-            # Buid new JobInput object with the OpenAI route and input
-            openAiJob = JobInput({
-                "openai_route": "/v1/completions",
-                "openai_input": {
-                    "model": model,
-                    "prompt": job_input.prompt,
-                    "stream": job_input.stream
-                }
-            })
+            messages = [{"role": "user", "content": job_input.prompt}]
         else:
-            # Buid new JobInput object with the OpenAI route and input
-            openAiJob = JobInput({
-                "openai_route": "/v1/chat/completions",
-                "openai_input": {
-                    "model": model,
-                    "messages": job_input.prompt,
-                    "stream": job_input.stream
-                }
-            })
+            messages = job_input.prompt
+
+        openAiJob = JobInput({
+            "openai_route": "/v1/chat/completions",
+            "openai_input": {
+                "model": model,
+                "messages": messages,
+                "stream": job_input.stream
+            }
+        })
 
         print ("Generating response for job_input:", job_input)
         print ("OpenAI job:", openAiJob)
         
-        # Create a generator that will yield the response from the OpenAI API
         openAIEngine = LlamaOpenAiEngine()
         generate = openAIEngine.generate(openAiJob)
 
-        # Yield the response from the OpenAI API
         async for batch in generate:
             yield batch
 
