@@ -9,6 +9,7 @@ RUN apt-get update --yes --quiet && \
         software-properties-common \
         gpg-agent \
         curl \
+        wget \
         netcat-openbsd \
         ca-certificates && \
     add-apt-repository --yes ppa:deadsnakes/ppa && \
@@ -30,7 +31,7 @@ RUN apt-get update --yes --quiet && \
 ENV HF_CACHE_ROOT="/runpod-volume/huggingface-cache/hub"
 ENV MODEL_CACHE_FILE="$HF_CACHE_ROOT/$MODEL_FILE.gguf"
 
-ENV LLAMA_ARG_MODELS_DIR="/runpod-volume/huggingface-cache/hub"
+ENV LLAMA_CACHE="$HF_CACHE_ROOT"
 ENV LLAMA_ARG_PORT="5000"
 ENV LLAMA_ARG_N_GPU_LAYERS_DRAFT="all"
 ENV LLAMA_ARG_SPEC_TYPE="draft-mtp"

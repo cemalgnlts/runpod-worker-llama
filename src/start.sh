@@ -19,16 +19,6 @@ trap cleanup SIGINT SIGTERM
 
 pgrep llama-server | xargs -r kill -9 || true
 
-if [ ! -f "$MODEL_CACHE_FILE" ]; then
-    echo "start.sh: Downloading model..."
-    wget -q --show-progress --progress=dot:giga \
-        --header="Authorization: Bearer $HF_TOKEN" \
-        -O "$MODEL_CACHE_FILE" \
-        "https://huggingface.co/$MODEL_REPO/resolve/main/$MODEL_FILE?download=true"
-else
-    echo "start.sh: Model exists."
-fi
-
 echo "start.sh: Starting llama-server..."
 
 LD_LIBRARY_PATH=/app /app/llama-server \

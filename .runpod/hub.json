@@ -12,22 +12,12 @@
     "presets": [],
     "env": [
       {
-        "key": "MODEL_REPO",
+        "key": "LLAMA_ARG_HF_REPO",
         "input": {
           "name": "Model HF repo",
           "type": "string",
           "description": "Hugging face repo for model",
-          "default": "unsloth/Qwen3.5-9B-MTP-GGUF",
-          "advanced": false
-        }
-      },
-      {
-        "key": "MODEL_FILE",
-        "input": {
-          "name": "Model gguf file",
-          "type": "string",
-          "description": "Model file name",
-          "default": "Qwen3.5-9B-MTP-UD-Q4_K_XL.gguf",
+          "default": "unsloth/Qwen3.5-9B-MTP-GGUF:UD-Q4_K_XL",
           "advanced": false
         }
       },
