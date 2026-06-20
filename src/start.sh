@@ -19,10 +19,12 @@ trap cleanup SIGINT SIGTERM
 
 pgrep llama-server | xargs -r kill -9 || true
 
-if [ ! -f "$MODEL_FILE" ]; then
+if [ ! -f "$MODEL_CACHE_FILE" ]; then
     echo "start.sh: Downloading model..."
-    mkdir -p "$HF_CACHE_ROOT"
-    curl -L -o "$MODEL_FILE" "https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-UD-Q4_K_XL.gguf?download=true"
+    wget -q --show-progress --progress=dot:giga \
+        --header="Authorization: Bearer $HF_TOKEN" \
+        -O "$MODEL_CACHE_FILE" \
+        "https://huggingface.co/$MODEL_REPO/resolve/main/$MODEL_FILE?download=true"
 else
     echo "start.sh: Model exists."
 fi
@@ -49,11 +51,11 @@ while true; do
         break
     fi
 
-    sleep 1
+    sleep 0.5
     secs=$((secs + 1))
 
-    if [ $secs -ge 120 ]; then
-        echo "start.sh: Error: llama-server did not start within 120 seconds."
+    if [ $secs -ge 180 ]; then
+        echo "start.sh: Error: llama-server did not start within 90 seconds."
         exit 1
     fi
 done

@@ -12,12 +12,32 @@
     "presets": [],
     "env": [
       {
-        "key": "LLAMA_MODEL_NAME",
+        "key": "MODEL_REPO",
         "input": {
-          "name": "Model Name",
+          "name": "Model HF repo",
           "type": "string",
-          "description": "Name of a model to preload",
-          "default": "unsloth/Qwen35-9B-GGUF:UD-Q4_K_XL",
+          "description": "Hugging face repo for model",
+          "default": "unsloth/Qwen3.5-9B-MTP-GGUF",
+          "advanced": false
+        }
+      },
+      {
+        "key": "MODEL_FILE",
+        "input": {
+          "name": "Model gguf file",
+          "type": "string",
+          "description": "Model file name",
+          "default": "Qwen3.5-9B-MTP-UD-Q4_K_XL.gguf",
+          "advanced": false
+        }
+      },
+      {
+        "key": "LLAMA_ARG_ALIAS",
+        "input": {
+          "name": "Model alias",
+          "type": "string",
+          "description": "Model alias name",
+          "default": "qwen3.5-9b",
           "advanced": false
         }
       },
@@ -37,7 +57,7 @@
           "name": "Parallel Requests",
           "type": "string",
           "description": "Maximum number of concurrent requests to handle (default: 4 or 1)",
-          "default": "",
+          "default": 4,
           "advanced": true
         }
       }

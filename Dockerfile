@@ -28,16 +28,21 @@ RUN apt-get update --yes --quiet && \
     rm -rf /var/lib/apt/lists/*
 
 ENV HF_CACHE_ROOT="/runpod-volume/huggingface-cache/hub"
-ENV MODEL_FILE="$HF_CACHE_ROOT/Qwen3.5-9B-UD-Q4_K_XL.gguf"
+ENV MODEL_CACHE_FILE="$HF_CACHE_ROOT/$MODEL_FILE.gguf"
 
 ENV LLAMA_ARG_MODELS_DIR="/runpod-volume/huggingface-cache/hub"
-ENV LLAMA_ARG_ALIAS="qwen3.5-9b"
-ENV LLAMA_ARG_CTX_SIZE=131072
-ENV LLAMA_ARG_N_GPU_LAYERS=99
-ENV LLAMA_ARG_FLASH_ATTN="on"
-ENV LLAMA_ARG_KV_UNIFIED="on"
-ENV LLAMA_ARG_N_PARALLEL=4
 ENV LLAMA_ARG_PORT="5000"
+ENV LLAMA_ARG_N_GPU_LAYERS_DRAFT="all"
+ENV LLAMA_ARG_SPEC_TYPE="draft-mtp"
+ENV LLAMA_ARG_SPEC_DRAFT_N_MAX="2"
+ENV LLAMA_ARG_CACHE_TYPE_K="q8_0"
+ENV LLAMA_ARG_CACHE_TYPE_V="q8_0"
+ENV LLAMA_ARG_N_GPU_LAYERS="all"
+ENV LLAMA_ARG_CTX_SIZE="131072"
+ENV LLAMA_ARG_FLASH_ATTN="on"
+ENV LLAMA_ARG_REASONING="off"
+ENV LLAMA_ARG_KV_UNIFIED="on"
+ENV LLAMA_ARG_N_PARALLEL="4"
 
 WORKDIR /work
 
@@ -46,5 +51,6 @@ RUN pip install -r /work/requirements.txt
 
 COPY ./src /work
 RUN chmod +x /work/start.sh
+RUN mkdir -p "$HF_CACHE_ROOT"
 
 ENTRYPOINT ["/bin/bash", "-c", "/work/start.sh"]
