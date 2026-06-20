@@ -18,10 +18,6 @@ on:
         description: 'llama version to build. Example: 1.20.0'
         required: true
         type: string
-      next_version_suffix:
-        description: 'Next version suffix to compare with the new release. Example: 0'
-        required: false
-        type: string
 
 jobs:
   build-push-docker-image:
@@ -42,16 +38,3 @@ jobs:
           build-args: LLAMA_VERSION=${{ inputs.llama_version }}
           push: true
           tags: cemalgnlts/runpod-llama:${{ inputs.llama_version }}${{ inputs.next_version_suffix }},cemalgnlts/runpod-llama:latest
-
-  create-release:
-    name: 🏷️ Create GitHub Release
-    needs: build-push-docker-image
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
-    permissions:
-      contents: write
-    steps:
-      - uses: ncipollo/release-action@v1
-        with:
-          commit: master
-          tag: llama@${{ inputs.llama_version }}${{ inputs.next_version_suffix }}
