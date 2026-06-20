@@ -27,8 +27,6 @@ async def handler(job: any):
 #    async for batch in results_generator:
 #        yield batch
 
-runpod.serverless.log.info("pre_start")
-
 runpod.serverless.start(
     {
         "handler": handler,
@@ -36,5 +34,3 @@ runpod.serverless.start(
         "return_aggregate_stream": True,
     }
 )
-
-runpod.serverless.log.info("post_start")

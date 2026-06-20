@@ -29,7 +29,6 @@ RUN apt-get update --yes --quiet && \
     rm -rf /var/lib/apt/lists/*
 
 ENV HF_CACHE_ROOT="/runpod-volume/huggingface-cache/hub"
-ENV MODEL_CACHE_FILE="$HF_CACHE_ROOT/$MODEL_FILE.gguf"
 
 ENV LLAMA_CACHE="$HF_CACHE_ROOT"
 ENV LLAMA_ARG_PORT="5000"

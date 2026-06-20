@@ -19,16 +19,17 @@ trap cleanup SIGINT SIGTERM
 
 pgrep llama-server | xargs -r kill -9 || true
 
-echo "start.sh: Starting llama-server..."
+echo "start.sh: Starting llama-server... Cache Folder: $LLAMA_CACHE"
 
 LD_LIBRARY_PATH=/app /app/llama-server \
   --alias "$LLAMA_ARG_ALIAS" \
+  --hf-repo "${LLAMA_ARG_HF_REPO:-unsloth/Qwen3.5-9B-MTP-GGUF:UD-Q4_K_XL}" \
   --reasoning off \
   --temp 0.7 \
   --top-p 0.8 \
   --top-k 20 \
   --min-p 0.00 \
-  --no-ui 2>&1 &
+  --no-ui &
 
 LLAMA_SERVER_PID=$!
 
