@@ -8,8 +8,6 @@ RUN apt-get update --yes --quiet && \
     apt-get install --yes --quiet --no-install-recommends \
         software-properties-common \
         gpg-agent \
-        curl \
-        wget \
         netcat-openbsd \
         ca-certificates && \
     add-apt-repository --yes ppa:deadsnakes/ppa && \
@@ -31,10 +29,8 @@ RUN apt-get update --yes --quiet && \
 ENV HF_CACHE_ROOT="/runpod-volume/huggingface-cache/hub"
 
 ENV LLAMA_CACHE="$HF_CACHE_ROOT"
-ENV LLAMA_ARG_PORT="5000"
 ENV LLAMA_ARG_N_GPU_LAYERS_DRAFT="all"
-ENV LLAMA_ARG_SPEC_TYPE="draft-mtp"
-ENV LLAMA_ARG_SPEC_DRAFT_N_MAX="2"
+ENV LLAMA_ARG_SPEC_TYPE="ngram-simple"
 ENV LLAMA_ARG_CACHE_TYPE_K="q8_0"
 ENV LLAMA_ARG_CACHE_TYPE_V="q8_0"
 ENV LLAMA_ARG_N_GPU_LAYERS="all"
@@ -43,6 +39,7 @@ ENV LLAMA_ARG_FLASH_ATTN="on"
 ENV LLAMA_ARG_REASONING="off"
 ENV LLAMA_ARG_KV_UNIFIED="on"
 ENV LLAMA_ARG_N_PARALLEL="4"
+ENV LLAMA_ARG_PORT="5000"
 
 WORKDIR /work
 
