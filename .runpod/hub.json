@@ -3,7 +3,7 @@
   "description": "A lightning-fast Llama.cpp Worker",
   "type": "serverless",
   "category": "language",
-  "iconUrl": "https://raw.githubusercontent.com/ggml-org/llama.brand/refs/heads/master/cover/llama-cpp/cover-llama-cpp-light.svg",
+  "iconUrl": "https://raw.githubusercontent.com/cemalgnlts/runpod-worker-llama/refs/heads/main/icon.png",
   "config": {
     "runsOn": "GPU",
     "gpuCount": 1,
