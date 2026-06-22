@@ -5,11 +5,11 @@
       "input": {
         "prompt": "ping"
       },
-      "timeout": 120000
+      "timeout": 200000
     }
   ],
   "config": {
-    "gpuTypeId": "NVIDIA GeForce RTX 4090",
+    "gpuTypeId": "AMPERE_16",
     "gpuCount": 1,
     "env": [
       {
