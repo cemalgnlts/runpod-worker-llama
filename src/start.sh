@@ -42,9 +42,8 @@ while true; do
     sleep 0.5
     secs=$((secs + 1))
 
-    if [ $secs -ge 240 ]; then
-        echo "start.sh: Error: llama-server did not start within 4 min."
-        exit 1
+    if [ $((secs % 120)) -eq 0 ] && [ $secs -ne 0 ]; then
+        echo "start.sh: Warn: llama-server did not start within $((secs / 2)) sec."
     fi
 done
 

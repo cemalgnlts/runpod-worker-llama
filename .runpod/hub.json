@@ -1,14 +1,14 @@
 {
-  "title": "Runpod Worker Llama.cpp",
-  "description": "A serverless Llama.cpp Worker for Runpod",
+  "title": "Llama.cpp",
+  "description": "A lightning-fast Llama.cpp Worker",
   "type": "serverless",
   "category": "language",
-  "iconUrl": "https://llama-cpp.com/wp-content/uploads/2025/10/Llama-cpp-768x277.jpg",
+  "iconUrl": "https://raw.githubusercontent.com/ggml-org/llama.brand/refs/heads/master/cover/llama-cpp/cover-llama-cpp-light.svg",
   "config": {
     "runsOn": "GPU",
     "gpuCount": 1,
     "gpuIds": "AMPERE_16,AMPERE_24,ADA_24",
-    "containerDiskInGb": 20,
+    "containerDiskInGb": 25,
     "presets": [],
     "env": [
       {
@@ -16,7 +16,7 @@
         "input": {
           "name": "Model HF repo",
           "type": "string",
-          "description": "Hugging face repo for model",
+          "description": "Hugging Face model repository; quant is optional, case-insensitive, default to Q4_K_M, <user>/<model>[:quant]",
           "default": "unsloth/Qwen3.5-9B-MTP-GGUF:UD-Q4_K_XL",
           "advanced": false
         }
@@ -26,7 +26,7 @@
         "input": {
           "name": "Model alias",
           "type": "string",
-          "description": "Model alias name",
+          "description": "Alias for the model",
           "default": "qwen3.5-9b",
           "advanced": false
         }
@@ -36,8 +36,8 @@
         "input": {
           "name": "Max Concurrency",
           "type": "number",
-          "description": "Maximum number of concurrent requests to handle (default: 8)",
-          "default": 8,
+          "description": "Maximum number of concurrent requests to handle (default: 4)",
+          "default": 4,
           "advanced": true
         }
       },
