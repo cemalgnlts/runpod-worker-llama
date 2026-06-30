@@ -47,4 +47,6 @@ COPY ./src /work
 RUN chmod +x /work/start.sh
 RUN mkdir -p "$HF_CACHE_ROOT"
 
+EXPOSE 80
+
 ENTRYPOINT ["/bin/bash", "-c", "/work/start.sh"]
