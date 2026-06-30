@@ -48,7 +48,7 @@ class LlamaOpenAiEngine(LlamaEngine):
     def __init__(self):
         load_dotenv()
         print ("LlamaOpenAiEngine initialized")
-
+    
     async def generate(self, job_input):
         print("Generating response for job_input:", job_input)
 

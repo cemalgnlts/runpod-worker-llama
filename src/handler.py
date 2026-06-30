@@ -1,23 +1,22 @@
-import runpod
 import os
-from utils import JobInput
-from engine import LlamaEngine, LlamaOpenAiEngine
+from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
+from engine import LlamaOpenAiEngine
 
 DEFAULT_MAX_CONCURRENCY = 4
 max_concurrency = int(os.getenv("MAX_CONCURRENCY", DEFAULT_MAX_CONCURRENCY))
 
-async def handler(job: any):
-    # Just dump the whole input to the console and then return an {"ok": True} response
-    runpod.serverless.log.info("New request.")
+app = FastAPI()
 
-    job_input = JobInput(job["input"])
-    engine_class = LlamaOpenAiEngine if job_input.openai_route else LlamaEngine
-    engine = engine_class()  # Instantiate the engine
+@app.get("/ping")
+async def health_check():
+    return {"status": "healthy"}
 
-    job = engine.generate(job_input)  # Call generate with job_input
-
-    async for batch in job:
-        yield batch
+@app.post("/generate")
+async def generate(request: dict):
+    engine = LlamaOpenAiEngine()
+    job = engine._handle_chat_or_completion_request(request, True)
+    return StreamingResponse(job, media_type="text/event-stream")
 
 # Original code from vllm runpod_wrapper.py
 #async def handler(job):
@@ -27,10 +26,14 @@ async def handler(job: any):
 #    async for batch in results_generator:
 #        yield batch
 
-runpod.serverless.start(
-    {
-        "handler": handler,
-        "concurrency_modifier": lambda _x: max_concurrency,
-        "return_aggregate_stream": True,
-    }
-)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", "80")))
+
+# runpod.serverless.start(
+#     {
+#         "handler": handler,
+#         "concurrency_modifier": lambda _x: max_concurrency,
+#         "return_aggregate_stream": True,
+#     }
+# )
