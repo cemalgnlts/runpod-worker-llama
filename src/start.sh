@@ -4,8 +4,17 @@ echo "start.sh: Begin";
 
 set -e -o pipefail
 
+# llama-server serves the OpenAI-compatible API directly on the main PORT.
+# health.py answers RunPod's /ping on PORT_HEALTH.
+export LLAMA_ARG_PORT="${PORT:-80}"
+export PORT_HEALTH="${PORT_HEALTH:-8080}"
+
 cleanup() {
     echo "start.sh: Cleaning up..."
+
+    if [ -n "$HEALTH_PID" ]; then
+        kill $HEALTH_PID 2>/dev/null || true
+    fi
 
     if [ -n "$LLAMA_SERVER_PID" ]; then
         echo "start.sh: Killing llama-server (PID: $LLAMA_SERVER_PID)..."
@@ -19,7 +28,13 @@ trap cleanup SIGINT SIGTERM
 
 pgrep llama-server | xargs -r kill -9 || true
 
-echo "start.sh: Starting llama-server... Cache Folder: $LLAMA_CACHE"
+# Start the health server first so /ping returns 204 (initializing) while the
+# model loads, instead of refusing connections.
+echo "start.sh: Starting health server on port $PORT_HEALTH..."
+python -u health.py &
+HEALTH_PID=$!
+
+echo "start.sh: Starting llama-server on port $LLAMA_ARG_PORT... Cache Folder: $LLAMA_CACHE"
 
 LD_LIBRARY_PATH=/app /app/llama-server \
   --temp 0.7 \
@@ -30,23 +45,5 @@ LD_LIBRARY_PATH=/app /app/llama-server \
 
 LLAMA_SERVER_PID=$!
 
-echo "start.sh: Waiting for llama-server to load model..."
-
-secs=0
-
-while true; do
-    if nc -z 0.0.0.0 "$LLAMA_ARG_PORT" >/dev/null 2>&1; then
-        break
-    fi
-
-    sleep 0.5
-    secs=$((secs + 1))
-
-    if [ $((secs % 120)) -eq 0 ] && [ $secs -ne 0 ]; then
-        echo "start.sh: Warn: llama-server did not start within $((secs / 2)) sec."
-    fi
-done
-
-echo "start.sh: llama-server is ready!"
-
-python -u handler.py $1
+# Keep the container alive; exit when llama-server exits.
+wait $LLAMA_SERVER_PID

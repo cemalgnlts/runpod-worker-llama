@@ -36,7 +36,10 @@ ENV LLAMA_ARG_N_GPU_LAYERS="all"
 ENV LLAMA_ARG_CTX_SIZE="32768"
 ENV LLAMA_ARG_FLASH_ATTN="on"
 ENV LLAMA_ARG_REASONING="off"
-ENV LLAMA_ARG_PORT="5000"
+
+# llama-server binds to PORT (the main app port); health.py listens on PORT_HEALTH.
+ENV PORT="80"
+ENV PORT_HEALTH="8080"
 
 WORKDIR /work
 
@@ -47,6 +50,6 @@ COPY ./src /work
 RUN chmod +x /work/start.sh
 RUN mkdir -p "$HF_CACHE_ROOT"
 
-EXPOSE 80
+EXPOSE 80 8080
 
 ENTRYPOINT ["/bin/bash", "-c", "/work/start.sh"]
