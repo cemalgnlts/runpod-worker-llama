@@ -5,7 +5,7 @@ echo "start.sh: Begin";
 set -e -o pipefail
 
 # llama-server serves the OpenAI-compatible API directly on the main PORT.
-# health.py answers RunPod's /ping on PORT_HEALTH.
+# health.py answers RunPod's /ping && /health on PORT_HEALTH.
 export LLAMA_ARG_PORT="${PORT:-80}"
 export PORT_HEALTH="${PORT_HEALTH:-8080}"
 
@@ -26,8 +26,6 @@ cleanup() {
 
 trap cleanup SIGINT SIGTERM
 
-pgrep llama-server | xargs -r kill -9 || true
-
 # Start the health server first so /ping returns 204 (initializing) while the
 # model loads, instead of refusing connections.
 echo "start.sh: Starting health server on port $PORT_HEALTH..."
@@ -35,6 +33,8 @@ python -u health.py &
 HEALTH_PID=$!
 
 echo "start.sh: Starting llama-server on port $LLAMA_ARG_PORT... Cache Folder: $LLAMA_CACHE"
+
+mkdir -p "$LLAMA_CACHE"
 
 LD_LIBRARY_PATH=/app /app/llama-server \
   --temp 0.7 \

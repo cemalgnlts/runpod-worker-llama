@@ -11,6 +11,7 @@ LLAMA_HEALTH_URL = f"http://localhost:{os.getenv('LLAMA_ARG_PORT', '80')}/health
 
 
 @app.get("/ping")
+@app.get("/health")
 async def ping():
     # llama-server: 200 = model loaded/ready, 503 = still loading.
     # RunPod load balancer: 200 = Healthy, 204 = Initializing, other = Unhealthy.
@@ -25,4 +26,5 @@ async def ping():
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT_HEALTH", "8080"))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    # Health checks fire constantly; silence per-request access logs.
+    uvicorn.run(app, host="0.0.0.0", port=port, access_log=False)
