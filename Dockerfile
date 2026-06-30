@@ -1,5 +1,17 @@
 FROM ghcr.io/ggml-org/llama.cpp:server-cuda
 
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+RUN apt-get update --yes --quiet && \
+    apt-get install --yes --quiet --no-install-recommends \
+        python3 \
+        python3-pip && \
+    ln -sf /usr/bin/python3 /usr/bin/python && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 ENV HF_CACHE_ROOT="/runpod-volume/models"
 ENV LLAMA_CACHE="/runpod-volume/models"
 
@@ -18,7 +30,7 @@ ENV PORT="80"
 WORKDIR /work
 
 COPY ./src/requirements.txt /work/requirements.txt
-RUN pip install -r /work/requirements.txt
+RUN pip install --break-system-packages -r /work/requirements.txt
 
 COPY ./src /work
 RUN chmod +x /work/start.sh
