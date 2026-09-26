@@ -1,6 +1,6 @@
 {
   "title": "Llama.cpp",
-  "description": "A lightning-fast Llama.cpp Worker",
+  "description": "A lightning-fast Llama.cpp Worker. Load Balancer",
   "type": "serverless",
   "category": "language",
   "iconUrl": "https://raw.githubusercontent.com/cemalgnlts/runpod-worker-llama/refs/heads/main/icon.png",
