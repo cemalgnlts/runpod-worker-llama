@@ -6,6 +6,7 @@
   "iconUrl": "https://raw.githubusercontent.com/cemalgnlts/runpod-worker-llama/refs/heads/main/icon.png",
   "config": {
     "runsOn": "GPU",
+    "endpointType": "LB",
     "gpuCount": 1,
     "gpuIds": "AMPERE_16,AMPERE_24,ADA_24",
     "containerDiskInGb": 25,
@@ -32,23 +33,15 @@
         }
       },
       {
-        "key": "MAX_CONCURRENCY",
-        "input": {
-          "name": "Max Concurrency",
-          "type": "number",
-          "description": "Maximum number of concurrent requests to handle (default: 4)",
-          "default": 4,
-          "advanced": true
-        }
-      },
-      {
-        "key": "LLAMA_NUM_PARALLEL",
+        "key": "LLAMA_ARG_N_PARALLEL",
         "input": {
           "name": "Parallel Requests",
-          "type": "string",
-          "description": "Maximum number of concurrent requests to handle (default: 4 or 1)",
+          "type": "number",
+          "description": "Number of parallel request slots; context is split evenly between them",
           "default": 4,
-          "advanced": true
+          "advanced": true,
+          "min": 1,
+          "max": 16
         }
       }
     ]

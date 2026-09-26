@@ -1,4 +1,5 @@
-FROM ghcr.io/ggml-org/llama.cpp:server-cuda
+ARG LLAMA_VERSION=""
+FROM ghcr.io/ggml-org/llama.cpp:server-cuda${LLAMA_VERSION:+-$LLAMA_VERSION}
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
@@ -12,7 +13,6 @@ RUN apt-get update --yes --quiet && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-ENV HF_CACHE_ROOT="/runpod-volume/models"
 ENV LLAMA_CACHE="/runpod-volume/models"
 
 ENV LLAMA_ARG_CACHE_TYPE_K="q8_0"

@@ -5,7 +5,7 @@ on:
   workflow_call:
     inputs:
       llama_version:
-        description: 'llama version to build. Example: 1.20.0'
+        description: 'llama.cpp release tag to build. Example: b6500'
         required: true
         type: string
       next_version_suffix:
@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       llama_version:
-        description: 'llama version to build. Example: 1.20.0'
+        description: 'llama.cpp release tag to build. Example: b6500'
         required: true
         type: string
 
@@ -23,7 +23,7 @@ jobs:
   build-push-docker-image:
     name: 🐳 Build and push Docker image
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-qemu-action@v3

@@ -10,9 +10,7 @@ app = FastAPI()
 LLAMA_HEALTH_URL = f"http://localhost:{os.getenv('LLAMA_ARG_PORT', '80')}/health"
 
 
-@app.get("/ping")
-@app.get("/health")
-async def ping():
+async def _healthCheck():
     # llama-server: 200 = model loaded/ready, 503 = still loading.
     # RunPod load balancer: 200 = Healthy, 204 = Initializing, other = Unhealthy.
     try:
@@ -22,6 +20,16 @@ async def ping():
     except Exception:
         # Not reachable yet -> still initializing.
         return Response(status_code=204)
+
+
+@app.get("/ping")
+async def ping():
+    return await _healthCheck()
+
+
+@app.get("/health")
+async def health():
+    return await _healthCheck()
 
 
 if __name__ == "__main__":
